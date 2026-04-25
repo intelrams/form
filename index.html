@@ -3,27 +3,459 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Delivery Information Form</title>
+    <title>Premium Calculator</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 420px;
+        }
+
+        .card {
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+            padding: 28px;
+        }
+
+        h1 {
+            font-size: 22px;
+            margin-bottom: 18px;
+            color: #222;
+            text-align: center;
+        }
+
+        /* Calculator */
+        .display {
+            width: 100%;
+            height: 80px;
+            background: #1e1e2f;
+            color: #fff;
+            font-size: 32px;
+            text-align: right;
+            padding: 16px;
+            border-radius: 10px;
+            margin-bottom: 16px;
+            overflow: hidden;
+            word-wrap: break-word;
+            font-family: "Courier New", monospace;
+        }
+
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 18px;
+            font-size: 18px;
+            border: none;
+            border-radius: 10px;
+            background: #f0f0f5;
+            color: #222;
+            cursor: pointer;
+            transition: transform 0.08s, background 0.15s;
+            font-weight: 500;
+        }
+
+        .btn:hover {
+            background: #e4e4ec;
+        }
+
+        .btn:active {
+            transform: scale(0.96);
+        }
+
+        .btn.op {
+            background: #ff9500;
+            color: #fff;
+        }
+
+        .btn.op:hover {
+            background: #e0840b;
+        }
+
+        .btn.equals {
+            background: #34c759;
+            color: #fff;
+            grid-column: span 2;
+        }
+
+        .btn.equals:hover {
+            background: #2aa84a;
+        }
+
+        .btn.clear {
+            background: #ff3b30;
+            color: #fff;
+        }
+
+        .btn.clear:hover {
+            background: #d9332a;
+        }
+
+        /* Modal */
+        .overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.55);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            padding: 20px;
+        }
+
+        .overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: #fff;
+            border-radius: 16px;
+            padding: 28px;
+            max-width: 420px;
+            width: 100%;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+            position: relative;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            width: 32px;
+            height: 32px;
+            border: none;
+            background: #f0f0f5;
+            color: #444;
+            border-radius: 50%;
+            font-size: 18px;
+            line-height: 1;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.15s, color 0.15s;
+        }
+
+        .close-btn:hover {
+            background: #ff3b30;
+            color: #fff;
+        }
+
+        .modal h2 {
+            font-size: 20px;
+            margin-bottom: 6px;
+            color: #222;
+        }
+
+        .modal .subtitle {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 18px;
+        }
+
+        .field {
+            margin-bottom: 14px;
+        }
+
+        .field label {
+            display: block;
+            font-size: 13px;
+            color: #444;
+            margin-bottom: 6px;
+            font-weight: 500;
+        }
+
+        .field input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 15px;
+            font-family: inherit;
+            transition: border-color 0.15s;
+        }
+
+        .field input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .row {
+            display: flex;
+            gap: 12px;
+        }
+
+        .row .field {
+            flex: 1;
+        }
+
+        .pay-btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 8px;
+            transition: transform 0.08s, box-shadow 0.15s;
+        }
+
+        .pay-btn:hover {
+            box-shadow: 0 6px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .pay-btn:active {
+            transform: scale(0.98);
+        }
+
+        .error {
+            color: #ff3b30;
+            font-size: 12px;
+            margin-top: 4px;
+            display: none;
+        }
+
+        .error.show {
+            display: block;
+        }
+    </style>
 </head>
 <body>
-    <h1>Delivery Information</h1>
-    <form action="https://formsubmit.co/noliemaragtarap@gmail.com" method="POST">
-        <label for="name">Full Name:</label>
-        <input type="text" id="name" name="name" required><br><br>
+    <div class="container">
+        <div class="card">
+            <h1>Premium Calculator</h1>
+            <div id="display" class="display">0</div>
+            <div class="buttons">
+                <button class="btn clear" data-action="clear">AC</button>
+                <button class="btn" data-action="backspace">DEL</button>
+                <button class="btn op" data-value="%">%</button>
+                <button class="btn op" data-value="/">÷</button>
 
-        <label for="email">Email:</label>
-        <input type="email" id="email" name="email" required><br><br>
+                <button class="btn" data-value="7">7</button>
+                <button class="btn" data-value="8">8</button>
+                <button class="btn" data-value="9">9</button>
+                <button class="btn op" data-value="*">×</button>
 
-        <label for="address">Address:</label>
-        <textarea id="address" name="address" required></textarea><br><br>
+                <button class="btn" data-value="4">4</button>
+                <button class="btn" data-value="5">5</button>
+                <button class="btn" data-value="6">6</button>
+                <button class="btn op" data-value="-">−</button>
 
-        <label for="phone">Phone Number:</label>
-        <input type="tel" id="phone" name="phone" required><br><br>
+                <button class="btn" data-value="1">1</button>
+                <button class="btn" data-value="2">2</button>
+                <button class="btn" data-value="3">3</button>
+                <button class="btn op" data-value="+">+</button>
 
-        <label for="delivery-date">Preferred Delivery Date:</label>
-        <input type="date" id="delivery-date" name="delivery-date" required><br><br>
+                <button class="btn" data-value="0">0</button>
+                <button class="btn" data-value=".">.</button>
+                <button class="btn equals" data-action="equals">=</button>
+            </div>
+        </div>
+    </div>
 
-        <input type="submit" value="Send">
-    </form>
+    <div id="overlay" class="overlay">
+        <div class="modal">
+            <button type="button" class="close-btn" id="close-payment" aria-label="Close">&times;</button>
+            <h2>Payment Required</h2>
+            <p class="subtitle">Please enter payment details to view your answer.</p>
+            <form id="payment-form" autocomplete="off">
+                <div class="field">
+                    <label for="cc-number">Card Number</label>
+                    <input type="text" id="cc-number" placeholder="1234 5678 9012 3456" inputmode="numeric" maxlength="19" required>
+                    <div class="error" id="err-number">Enter a valid card number</div>
+                </div>
+                <div class="field">
+                    <label for="cc-name">Name on Card</label>
+                    <input type="text" id="cc-name" placeholder="John Doe" required>
+                    <div class="error" id="err-name">Enter the name on the card</div>
+                </div>
+                <div class="row">
+                    <div class="field">
+                        <label for="cc-exp">Expiration</label>
+                        <input type="text" id="cc-exp" placeholder="MM/YY" maxlength="5" required>
+                        <div class="error" id="err-exp">Enter MM/YY</div>
+                    </div>
+                    <div class="field">
+                        <label for="cc-cvv">CVV</label>
+                        <input type="text" id="cc-cvv" placeholder="123" inputmode="numeric" maxlength="4" required>
+                        <div class="error" id="err-cvv">Enter CVV</div>
+                    </div>
+                </div>
+                <button type="submit" class="pay-btn">Pay Now</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const display = document.getElementById('display');
+        const overlay = document.getElementById('overlay');
+        const paymentForm = document.getElementById('payment-form');
+
+        let expression = '';
+        let pendingAnswer = null;
+        let justEvaluated = false;
+
+        function render() {
+            display.textContent = expression || '0';
+        }
+
+        function append(value) {
+            if (justEvaluated) {
+                if (/[0-9.]/.test(value)) {
+                    expression = '';
+                }
+                justEvaluated = false;
+            }
+            expression += value;
+            render();
+        }
+
+        function clearAll() {
+            expression = '';
+            justEvaluated = false;
+            render();
+        }
+
+        function backspace() {
+            expression = expression.slice(0, -1);
+            render();
+        }
+
+        function compute(expr) {
+            const sanitized = expr.replace(/[^0-9+\-*/%.() ]/g, '');
+            if (!sanitized) return null;
+            try {
+                const result = Function('"use strict"; return (' + sanitized + ')')();
+                if (result === undefined || Number.isNaN(result) || !Number.isFinite(result)) {
+                    return 'Error';
+                }
+                return Math.round(result * 1e10) / 1e10;
+            } catch (e) {
+                return 'Error';
+            }
+        }
+
+        function requestEquals() {
+            if (!expression) return;
+            const result = compute(expression);
+            if (result === null) return;
+            pendingAnswer = result;
+            openPayment();
+        }
+
+        function openPayment() {
+            overlay.classList.add('active');
+            document.getElementById('cc-number').focus();
+        }
+
+        function closePayment() {
+            overlay.classList.remove('active');
+            paymentForm.reset();
+            ['err-number', 'err-name', 'err-exp', 'err-cvv'].forEach(id => showError(id, false));
+        }
+
+        document.getElementById('close-payment').addEventListener('click', closePayment);
+        overlay.addEventListener('click', (e) => {
+            if (e.target === overlay) closePayment();
+        });
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && overlay.classList.contains('active')) {
+                closePayment();
+            }
+        });
+
+        document.querySelectorAll('.btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const action = btn.dataset.action;
+                const value = btn.dataset.value;
+                if (action === 'clear') clearAll();
+                else if (action === 'backspace') backspace();
+                else if (action === 'equals') requestEquals();
+                else if (value !== undefined) append(value);
+            });
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (overlay.classList.contains('active')) return;
+            if (e.key === 'Enter' || e.key === '=') {
+                e.preventDefault();
+                requestEquals();
+            } else if (e.key === 'Backspace') {
+                backspace();
+            } else if (e.key === 'Escape' || e.key.toLowerCase() === 'c') {
+                clearAll();
+            } else if (/^[0-9+\-*/%.]$/.test(e.key)) {
+                append(e.key);
+            }
+        });
+
+        // Credit card field formatting
+        const ccNumber = document.getElementById('cc-number');
+        ccNumber.addEventListener('input', () => {
+            let v = ccNumber.value.replace(/\D/g, '').slice(0, 16);
+            ccNumber.value = v.replace(/(.{4})/g, '$1 ').trim();
+        });
+
+        const ccExp = document.getElementById('cc-exp');
+        ccExp.addEventListener('input', () => {
+            let v = ccExp.value.replace(/\D/g, '').slice(0, 4);
+            if (v.length >= 3) v = v.slice(0, 2) + '/' + v.slice(2);
+            ccExp.value = v;
+        });
+
+        const ccCvv = document.getElementById('cc-cvv');
+        ccCvv.addEventListener('input', () => {
+            ccCvv.value = ccCvv.value.replace(/\D/g, '').slice(0, 4);
+        });
+
+        function showError(id, show) {
+            document.getElementById(id).classList.toggle('show', show);
+        }
+
+        paymentForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            const numDigits = ccNumber.value.replace(/\D/g, '');
+            const name = document.getElementById('cc-name').value.trim();
+            const exp = ccExp.value;
+            const cvv = ccCvv.value;
+
+            let ok = true;
+            if (numDigits.length < 12) { showError('err-number', true); ok = false; } else showError('err-number', false);
+            if (!name) { showError('err-name', true); ok = false; } else showError('err-name', false);
+            if (!/^\d{2}\/\d{2}$/.test(exp)) { showError('err-exp', true); ok = false; } else showError('err-exp', false);
+            if (cvv.length < 3) { showError('err-cvv', true); ok = false; } else showError('err-cvv', false);
+
+            if (!ok) return;
+
+            // Any card is accepted — reveal the answer
+            closePayment();
+            expression = String(pendingAnswer);
+            justEvaluated = true;
+            render();
+        });
+    </script>
 </body>
 </html>
