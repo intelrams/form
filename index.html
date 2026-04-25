@@ -3,57 +3,193 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Premium Calculator</title>
+    <title>NEXUS // Calculator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --cyan: #00f0ff;
+            --magenta: #ff2bd6;
+            --violet: #8b5cf6;
+            --green: #39ff14;
+            --bg-0: #05060f;
+            --bg-1: #0a0e1f;
+            --panel: rgba(15, 20, 40, 0.55);
+            --border: rgba(0, 240, 255, 0.35);
+            --text: #e6f7ff;
+            --muted: #8a9bbd;
+        }
+
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
         }
 
+        html, body {
+            height: 100%;
+        }
+
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Orbitron', sans-serif;
+            color: var(--text);
+            background: var(--bg-0);
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
             padding: 20px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Animated nebula background */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: -50%;
+            background:
+                radial-gradient(circle at 20% 30%, rgba(0, 240, 255, 0.25), transparent 40%),
+                radial-gradient(circle at 80% 70%, rgba(255, 43, 214, 0.22), transparent 45%),
+                radial-gradient(circle at 50% 50%, rgba(139, 92, 246, 0.18), transparent 55%);
+            animation: drift 18s ease-in-out infinite alternate;
+            z-index: 0;
+        }
+
+        /* Grid floor */
+        body::after {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(0, 240, 255, 0.06) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 240, 255, 0.06) 1px, transparent 1px);
+            background-size: 40px 40px;
+            mask-image: radial-gradient(ellipse at center, black 30%, transparent 75%);
+            -webkit-mask-image: radial-gradient(ellipse at center, black 30%, transparent 75%);
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        @keyframes drift {
+            0%   { transform: translate(0, 0) scale(1); }
+            50%  { transform: translate(3%, -2%) scale(1.05); }
+            100% { transform: translate(-2%, 2%) scale(1); }
         }
 
         .container {
             width: 100%;
-            max-width: 420px;
+            max-width: 440px;
+            position: relative;
+            z-index: 1;
         }
 
         .card {
-            background: #fff;
-            border-radius: 16px;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+            position: relative;
+            background: var(--panel);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            border: 1px solid var(--border);
+            border-radius: 20px;
             padding: 28px;
+            box-shadow:
+                0 0 0 1px rgba(0, 240, 255, 0.08) inset,
+                0 0 40px rgba(0, 240, 255, 0.18),
+                0 30px 80px rgba(0, 0, 0, 0.6);
+        }
+
+        /* Neon corner accents */
+        .card::before, .card::after {
+            content: '';
+            position: absolute;
+            width: 24px;
+            height: 24px;
+            border-color: var(--cyan);
+            border-style: solid;
+            pointer-events: none;
+        }
+        .card::before {
+            top: -1px; left: -1px;
+            border-width: 2px 0 0 2px;
+            border-top-left-radius: 20px;
+            box-shadow: -2px -2px 12px rgba(0, 240, 255, 0.6);
+        }
+        .card::after {
+            bottom: -1px; right: -1px;
+            border-width: 0 2px 2px 0;
+            border-bottom-right-radius: 20px;
+            box-shadow: 2px 2px 12px rgba(255, 43, 214, 0.6);
+            border-color: var(--magenta);
         }
 
         h1 {
-            font-size: 22px;
-            margin-bottom: 18px;
-            color: #222;
+            font-size: 18px;
+            font-weight: 800;
+            letter-spacing: 6px;
             text-align: center;
+            margin-bottom: 20px;
+            background: linear-gradient(90deg, var(--cyan), var(--magenta));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-transform: uppercase;
+            text-shadow: 0 0 30px rgba(0, 240, 255, 0.35);
         }
 
-        /* Calculator */
+        h1 .dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background: var(--green);
+            border-radius: 50%;
+            margin-right: 10px;
+            box-shadow: 0 0 10px var(--green), 0 0 20px var(--green);
+            animation: pulse 1.4s ease-in-out infinite;
+            vertical-align: middle;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.35; }
+        }
+
+        /* Calculator display */
         .display {
             width: 100%;
-            height: 80px;
-            background: #1e1e2f;
-            color: #fff;
-            font-size: 32px;
+            min-height: 90px;
+            background: linear-gradient(180deg, rgba(0, 8, 24, 0.9), rgba(0, 4, 12, 0.95));
+            border: 1px solid rgba(0, 240, 255, 0.3);
+            color: var(--cyan);
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 36px;
             text-align: right;
-            padding: 16px;
-            border-radius: 10px;
-            margin-bottom: 16px;
+            padding: 18px;
+            border-radius: 12px;
+            margin-bottom: 18px;
             overflow: hidden;
             word-wrap: break-word;
-            font-family: "Courier New", monospace;
+            text-shadow: 0 0 8px rgba(0, 240, 255, 0.7), 0 0 18px rgba(0, 240, 255, 0.35);
+            position: relative;
+            box-shadow:
+                0 0 25px rgba(0, 240, 255, 0.18) inset,
+                0 0 20px rgba(0, 240, 255, 0.15);
+        }
+
+        /* Scanline */
+        .display::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: repeating-linear-gradient(
+                0deg,
+                rgba(255, 255, 255, 0.02) 0px,
+                rgba(255, 255, 255, 0.02) 1px,
+                transparent 1px,
+                transparent 3px
+            );
+            pointer-events: none;
+            border-radius: 12px;
         }
 
         .buttons {
@@ -63,113 +199,205 @@
         }
 
         .btn {
-            padding: 18px;
-            font-size: 18px;
-            border: none;
+            padding: 16px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 16px;
+            font-weight: 600;
+            border: 1px solid rgba(0, 240, 255, 0.25);
             border-radius: 10px;
-            background: #f0f0f5;
-            color: #222;
+            background: rgba(0, 240, 255, 0.05);
+            color: var(--text);
             cursor: pointer;
-            transition: transform 0.08s, background 0.15s;
-            font-weight: 500;
+            transition: all 0.18s ease;
+            position: relative;
+            overflow: hidden;
+            letter-spacing: 1px;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(120deg, transparent, rgba(0, 240, 255, 0.18), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.5s ease;
         }
 
         .btn:hover {
-            background: #e4e4ec;
+            background: rgba(0, 240, 255, 0.15);
+            border-color: var(--cyan);
+            box-shadow: 0 0 18px rgba(0, 240, 255, 0.45);
+            color: var(--cyan);
+            text-shadow: 0 0 6px rgba(0, 240, 255, 0.8);
+        }
+
+        .btn:hover::before {
+            transform: translateX(100%);
         }
 
         .btn:active {
-            transform: scale(0.96);
+            transform: scale(0.95);
         }
 
         .btn.op {
-            background: #ff9500;
-            color: #fff;
+            border-color: rgba(255, 43, 214, 0.5);
+            background: rgba(255, 43, 214, 0.08);
+            color: var(--magenta);
+            text-shadow: 0 0 6px rgba(255, 43, 214, 0.5);
         }
 
         .btn.op:hover {
-            background: #e0840b;
+            background: rgba(255, 43, 214, 0.18);
+            border-color: var(--magenta);
+            box-shadow: 0 0 18px rgba(255, 43, 214, 0.55);
+            color: #fff;
         }
 
         .btn.equals {
-            background: #34c759;
-            color: #fff;
             grid-column: span 2;
+            border-color: rgba(57, 255, 20, 0.5);
+            background: rgba(57, 255, 20, 0.1);
+            color: var(--green);
+            text-shadow: 0 0 6px rgba(57, 255, 20, 0.6);
         }
 
         .btn.equals:hover {
-            background: #2aa84a;
-        }
-
-        .btn.clear {
-            background: #ff3b30;
+            background: rgba(57, 255, 20, 0.2);
+            border-color: var(--green);
+            box-shadow: 0 0 22px rgba(57, 255, 20, 0.6);
             color: #fff;
         }
 
+        .btn.clear {
+            border-color: rgba(255, 50, 80, 0.55);
+            background: rgba(255, 50, 80, 0.08);
+            color: #ff5577;
+            text-shadow: 0 0 6px rgba(255, 50, 80, 0.5);
+        }
+
         .btn.clear:hover {
-            background: #d9332a;
+            background: rgba(255, 50, 80, 0.18);
+            border-color: #ff5577;
+            box-shadow: 0 0 18px rgba(255, 50, 80, 0.55);
+            color: #fff;
         }
 
         /* Modal */
         .overlay {
             position: fixed;
             inset: 0;
-            background: rgba(0, 0, 0, 0.55);
+            background: rgba(2, 4, 12, 0.8);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
             display: none;
             align-items: center;
             justify-content: center;
             z-index: 10;
             padding: 20px;
+            animation: fadeIn 0.2s ease;
         }
 
         .overlay.active {
             display: flex;
         }
 
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
         .modal {
-            background: #fff;
-            border-radius: 16px;
-            padding: 28px;
-            max-width: 420px;
-            width: 100%;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
             position: relative;
+            background: linear-gradient(180deg, rgba(15, 20, 40, 0.92), rgba(8, 12, 28, 0.92));
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            padding: 30px;
+            max-width: 440px;
+            width: 100%;
+            box-shadow:
+                0 0 0 1px rgba(0, 240, 255, 0.1) inset,
+                0 0 50px rgba(0, 240, 255, 0.25),
+                0 30px 80px rgba(0, 0, 0, 0.7);
+            animation: modalIn 0.3s cubic-bezier(.2,.8,.2,1);
+        }
+
+        @keyframes modalIn {
+            from { transform: translateY(20px) scale(0.96); opacity: 0; }
+            to { transform: translateY(0) scale(1); opacity: 1; }
+        }
+
+        .modal::before, .modal::after {
+            content: '';
+            position: absolute;
+            width: 26px;
+            height: 26px;
+            border-style: solid;
+            pointer-events: none;
+        }
+        .modal::before {
+            top: -1px; left: -1px;
+            border-width: 2px 0 0 2px;
+            border-color: var(--cyan);
+            border-top-left-radius: 18px;
+            box-shadow: -2px -2px 14px rgba(0, 240, 255, 0.6);
+        }
+        .modal::after {
+            bottom: -1px; right: -1px;
+            border-width: 0 2px 2px 0;
+            border-color: var(--magenta);
+            border-bottom-right-radius: 18px;
+            box-shadow: 2px 2px 14px rgba(255, 43, 214, 0.6);
         }
 
         .close-btn {
             position: absolute;
-            top: 12px;
-            right: 12px;
-            width: 32px;
-            height: 32px;
-            border: none;
-            background: #f0f0f5;
-            color: #444;
+            top: 14px;
+            right: 14px;
+            width: 34px;
+            height: 34px;
+            border: 1px solid rgba(0, 240, 255, 0.3);
+            background: rgba(0, 240, 255, 0.06);
+            color: var(--cyan);
             border-radius: 50%;
-            font-size: 18px;
+            font-size: 20px;
+            font-family: 'Orbitron', sans-serif;
             line-height: 1;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: background 0.15s, color 0.15s;
+            transition: all 0.18s ease;
+            z-index: 1;
         }
 
         .close-btn:hover {
-            background: #ff3b30;
-            color: #fff;
+            background: rgba(255, 50, 80, 0.2);
+            border-color: #ff5577;
+            color: #ff5577;
+            box-shadow: 0 0 16px rgba(255, 50, 80, 0.6);
+            transform: rotate(90deg);
         }
 
         .modal h2 {
-            font-size: 20px;
+            font-size: 18px;
+            font-weight: 800;
+            letter-spacing: 4px;
             margin-bottom: 6px;
-            color: #222;
+            text-transform: uppercase;
+            background: linear-gradient(90deg, var(--cyan), var(--magenta));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
         }
 
         .modal .subtitle {
-            color: #666;
-            font-size: 14px;
-            margin-bottom: 18px;
+            color: var(--muted);
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 13px;
+            letter-spacing: 0.5px;
+            margin-bottom: 22px;
+            border-left: 2px solid var(--cyan);
+            padding-left: 10px;
         }
 
         .field {
@@ -178,25 +406,36 @@
 
         .field label {
             display: block;
-            font-size: 13px;
-            color: #444;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 11px;
+            color: var(--cyan);
+            letter-spacing: 2px;
+            text-transform: uppercase;
             margin-bottom: 6px;
-            font-weight: 500;
         }
 
         .field input {
             width: 100%;
-            padding: 12px;
-            border: 1px solid #ddd;
+            padding: 12px 14px;
+            border: 1px solid rgba(0, 240, 255, 0.25);
+            background: rgba(0, 8, 24, 0.6);
+            color: var(--text);
             border-radius: 8px;
             font-size: 15px;
-            font-family: inherit;
-            transition: border-color 0.15s;
+            font-family: 'Share Tech Mono', monospace;
+            letter-spacing: 1px;
+            transition: all 0.18s ease;
+        }
+
+        .field input::placeholder {
+            color: rgba(138, 155, 189, 0.5);
         }
 
         .field input:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: var(--cyan);
+            box-shadow: 0 0 0 3px rgba(0, 240, 255, 0.15), 0 0 18px rgba(0, 240, 255, 0.25) inset;
+            background: rgba(0, 12, 32, 0.8);
         }
 
         .row {
@@ -211,19 +450,38 @@
         .pay-btn {
             width: 100%;
             padding: 14px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: #fff;
-            border: none;
+            border: 1px solid var(--cyan);
             border-radius: 10px;
-            font-size: 16px;
-            font-weight: 600;
+            background: linear-gradient(90deg, rgba(0, 240, 255, 0.18), rgba(255, 43, 214, 0.18));
+            color: #fff;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 14px;
+            font-weight: 700;
+            letter-spacing: 4px;
+            text-transform: uppercase;
             cursor: pointer;
-            margin-top: 8px;
-            transition: transform 0.08s, box-shadow 0.15s;
+            margin-top: 12px;
+            transition: all 0.2s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .pay-btn::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.25), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.6s ease;
         }
 
         .pay-btn:hover {
-            box-shadow: 0 6px 15px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 0 30px rgba(0, 240, 255, 0.55), 0 0 60px rgba(255, 43, 214, 0.35);
+            border-color: var(--magenta);
+        }
+
+        .pay-btn:hover::before {
+            transform: translateX(100%);
         }
 
         .pay-btn:active {
@@ -231,21 +489,28 @@
         }
 
         .error {
-            color: #ff3b30;
-            font-size: 12px;
+            color: #ff5577;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 11px;
+            letter-spacing: 1px;
             margin-top: 4px;
             display: none;
+            text-shadow: 0 0 6px rgba(255, 50, 80, 0.5);
         }
 
         .error.show {
             display: block;
+        }
+
+        .error::before {
+            content: '> ';
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="card">
-            <h1>Premium Calculator</h1>
+            <h1><span class="dot"></span>Nexus // Calc</h1>
             <div id="display" class="display">0</div>
             <div class="buttons">
                 <button class="btn clear" data-action="clear">AC</button>
@@ -278,8 +543,8 @@
     <div id="overlay" class="overlay">
         <div class="modal">
             <button type="button" class="close-btn" id="close-payment" aria-label="Close">&times;</button>
-            <h2>Payment Required</h2>
-            <p class="subtitle">Please enter payment details to view your answer.</p>
+            <h2>Auth // Payment</h2>
+            <p class="subtitle">Verify credentials to decrypt result</p>
             <form id="payment-form" autocomplete="off">
                 <div class="field">
                     <label for="cc-number">Card Number</label>
@@ -303,7 +568,7 @@
                         <div class="error" id="err-cvv">Enter CVV</div>
                     </div>
                 </div>
-                <button type="submit" class="pay-btn">Pay Now</button>
+                <button type="submit" class="pay-btn">// Pay Now</button>
             </form>
         </div>
     </div>
