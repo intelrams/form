@@ -2,7 +2,10 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#05060f">
     <title>NEXUS // Calculator</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -25,6 +28,12 @@
             box-sizing: border-box;
             margin: 0;
             padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html {
+            -webkit-text-size-adjust: 100%;
+            text-size-adjust: 100%;
         }
 
         html, body {
@@ -36,12 +45,18 @@
             color: var(--text);
             background: var(--bg-0);
             min-height: 100vh;
+            min-height: 100dvh;
+            min-height: -webkit-fill-available;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 20px;
-            overflow: hidden;
+            padding:
+                calc(20px + env(safe-area-inset-top))
+                calc(20px + env(safe-area-inset-right))
+                calc(20px + env(safe-area-inset-bottom))
+                calc(20px + env(safe-area-inset-left));
             position: relative;
+            overscroll-behavior: none;
         }
 
         /* Animated nebula background */
@@ -199,7 +214,8 @@
         }
 
         .btn {
-            padding: 16px;
+            padding: 16px 8px;
+            min-height: 56px;
             font-family: 'Orbitron', sans-serif;
             font-size: 16px;
             font-weight: 600;
@@ -212,6 +228,11 @@
             position: relative;
             overflow: hidden;
             letter-spacing: 1px;
+            -webkit-appearance: none;
+            appearance: none;
+            touch-action: manipulation;
+            user-select: none;
+            -webkit-user-select: none;
         }
 
         .btn::before {
@@ -314,6 +335,9 @@
             padding: 30px;
             max-width: 440px;
             width: 100%;
+            max-height: calc(100dvh - 40px);
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
             box-shadow:
                 0 0 0 1px rgba(0, 240, 255, 0.1) inset,
                 0 0 50px rgba(0, 240, 255, 0.25),
@@ -351,15 +375,15 @@
 
         .close-btn {
             position: absolute;
-            top: 14px;
-            right: 14px;
-            width: 34px;
-            height: 34px;
+            top: 12px;
+            right: 12px;
+            width: 40px;
+            height: 40px;
             border: 1px solid rgba(0, 240, 255, 0.3);
             background: rgba(0, 240, 255, 0.06);
             color: var(--cyan);
             border-radius: 50%;
-            font-size: 20px;
+            font-size: 22px;
             font-family: 'Orbitron', sans-serif;
             line-height: 1;
             cursor: pointer;
@@ -368,6 +392,9 @@
             justify-content: center;
             transition: all 0.18s ease;
             z-index: 1;
+            -webkit-appearance: none;
+            appearance: none;
+            touch-action: manipulation;
         }
 
         .close-btn:hover {
@@ -416,15 +443,17 @@
 
         .field input {
             width: 100%;
-            padding: 12px 14px;
+            padding: 14px;
             border: 1px solid rgba(0, 240, 255, 0.25);
             background: rgba(0, 8, 24, 0.6);
             color: var(--text);
             border-radius: 8px;
-            font-size: 15px;
+            font-size: 16px;
             font-family: 'Share Tech Mono', monospace;
             letter-spacing: 1px;
             transition: all 0.18s ease;
+            -webkit-appearance: none;
+            appearance: none;
         }
 
         .field input::placeholder {
@@ -449,13 +478,14 @@
 
         .pay-btn {
             width: 100%;
-            padding: 14px;
+            padding: 16px;
+            min-height: 52px;
             border: 1px solid var(--cyan);
             border-radius: 10px;
             background: linear-gradient(90deg, rgba(0, 240, 255, 0.18), rgba(255, 43, 214, 0.18));
             color: #fff;
             font-family: 'Orbitron', sans-serif;
-            font-size: 14px;
+            font-size: 16px;
             font-weight: 700;
             letter-spacing: 4px;
             text-transform: uppercase;
@@ -464,6 +494,9 @@
             transition: all 0.2s ease;
             position: relative;
             overflow: hidden;
+            -webkit-appearance: none;
+            appearance: none;
+            touch-action: manipulation;
         }
 
         .pay-btn::before {
@@ -504,6 +537,98 @@
 
         .error::before {
             content: '> ';
+        }
+
+        /* Mobile / phones */
+        @media (max-width: 480px) {
+            body {
+                padding:
+                    calc(12px + env(safe-area-inset-top))
+                    calc(12px + env(safe-area-inset-right))
+                    calc(12px + env(safe-area-inset-bottom))
+                    calc(12px + env(safe-area-inset-left));
+            }
+
+            .card {
+                padding: 20px;
+                border-radius: 18px;
+            }
+
+            h1 {
+                font-size: 16px;
+                letter-spacing: 4px;
+                margin-bottom: 16px;
+            }
+
+            .display {
+                min-height: 76px;
+                font-size: 30px;
+                padding: 14px;
+                margin-bottom: 14px;
+            }
+
+            .buttons {
+                gap: 8px;
+            }
+
+            .btn {
+                padding: 14px 4px;
+                min-height: 52px;
+                font-size: 15px;
+                letter-spacing: 0.5px;
+            }
+
+            .modal {
+                padding: 22px 20px;
+                border-radius: 16px;
+            }
+
+            .modal h2 {
+                font-size: 16px;
+                letter-spacing: 3px;
+            }
+
+            .modal .subtitle {
+                font-size: 12px;
+                margin-bottom: 18px;
+            }
+
+            .row {
+                gap: 10px;
+            }
+
+            .pay-btn {
+                letter-spacing: 3px;
+            }
+        }
+
+        /* Very small phones (e.g. iPhone SE) */
+        @media (max-width: 360px) {
+            .btn {
+                padding: 12px 2px;
+                min-height: 48px;
+                font-size: 14px;
+            }
+
+            .display {
+                font-size: 26px;
+            }
+        }
+
+        /* Landscape phones */
+        @media (max-height: 500px) and (orientation: landscape) {
+            body {
+                align-items: flex-start;
+            }
+
+            .card {
+                padding: 16px;
+            }
+
+            h1 { margin-bottom: 10px; }
+            .display { min-height: 60px; font-size: 24px; padding: 10px; margin-bottom: 10px; }
+            .btn { min-height: 42px; padding: 10px 4px; font-size: 14px; }
+            .buttons { gap: 6px; }
         }
     </style>
 </head>
