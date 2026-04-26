@@ -164,6 +164,45 @@
             vertical-align: middle;
         }
 
+        .environment-switcher {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            border: 1px solid rgba(0, 240, 255, 0.25);
+            background: rgba(0, 8, 24, 0.55);
+            border-radius: 10px;
+            padding: 10px 12px;
+            margin-bottom: 14px;
+        }
+
+        .environment-switcher label {
+            font-family: 'Share Tech Mono', monospace;
+            color: var(--cyan);
+            font-size: 12px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .environment-switcher select {
+            flex: 1;
+            max-width: 210px;
+            border: 1px solid rgba(0, 240, 255, 0.3);
+            border-radius: 8px;
+            background: rgba(0, 20, 46, 0.75);
+            color: var(--text);
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 13px;
+            letter-spacing: 1px;
+            padding: 8px 10px;
+            outline: none;
+        }
+
+        .environment-switcher select:focus {
+            border-color: var(--cyan);
+            box-shadow: 0 0 0 2px rgba(0, 240, 255, 0.2);
+        }
+
         @keyframes pulse {
             0%, 100% { opacity: 1; }
             50% { opacity: 0.35; }
@@ -560,6 +599,22 @@
                 margin-bottom: 16px;
             }
 
+            .environment-switcher {
+                padding: 9px 10px;
+                margin-bottom: 12px;
+            }
+
+            .environment-switcher label {
+                font-size: 11px;
+                letter-spacing: 1px;
+            }
+
+            .environment-switcher select {
+                max-width: 165px;
+                font-size: 12px;
+                padding: 7px 8px;
+            }
+
             .display {
                 min-height: 76px;
                 font-size: 30px;
@@ -636,6 +691,15 @@
     <div class="container">
         <div class="card">
             <h1><span class="dot"></span>Nexus // Calc</h1>
+            <div class="environment-switcher">
+                <label for="environment">Environment</label>
+                <select id="environment" aria-label="Select environment">
+                    <option value="prod">Production</option>
+                    <option value="staging">Staging</option>
+                    <option value="dev">Development</option>
+                    <option value="sandbox">Sandbox (New)</option>
+                </select>
+            </div>
             <div id="display" class="display">0</div>
             <div class="buttons">
                 <button class="btn clear" data-action="clear">AC</button>
@@ -700,6 +764,7 @@
 
     <script>
         const display = document.getElementById('display');
+        const environmentSelect = document.getElementById('environment');
         const overlay = document.getElementById('overlay');
         const paymentForm = document.getElementById('payment-form');
 
@@ -709,6 +774,18 @@
 
         function render() {
             display.textContent = expression || '0';
+        }
+
+        function applyEnvironmentTheme(env) {
+            const themes = {
+                prod: { cyan: '#00f0ff', magenta: '#ff2bd6' },
+                staging: { cyan: '#ffd60a', magenta: '#ff8fab' },
+                dev: { cyan: '#7df9ff', magenta: '#9d4edd' },
+                sandbox: { cyan: '#39ff14', magenta: '#fb5607' }
+            };
+            const theme = themes[env] || themes.prod;
+            document.documentElement.style.setProperty('--cyan', theme.cyan);
+            document.documentElement.style.setProperty('--magenta', theme.magenta);
         }
 
         function append(value) {
@@ -787,6 +864,10 @@
             });
         });
 
+        environmentSelect.addEventListener('change', () => {
+            applyEnvironmentTheme(environmentSelect.value);
+        });
+
         document.addEventListener('keydown', (e) => {
             if (overlay.classList.contains('active')) return;
             if (e.key === 'Enter' || e.key === '=') {
@@ -846,6 +927,8 @@
             justEvaluated = true;
             render();
         });
+
+        applyEnvironmentTheme(environmentSelect.value);
     </script>
 </body>
 </html>
